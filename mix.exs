@@ -27,11 +27,14 @@ defmodule Anka.MixProject do
       app: :anka,
       version: version(),
       description: description(),
+      source_url: source_url(),
+      package: package(),
+      docs: docs(),
+      preferred_cli_env: preferred_cli_env(),
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      docs: docs()
+      deps: deps()
     ]
   end
 
@@ -40,6 +43,48 @@ defmodule Anka.MixProject do
     [
       extra_applications: [
         :logger
+      ]
+    ]
+  end
+
+  defp preferred_cli_env do
+    [
+      docs: :docs
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: [
+        "Ertuğrul Keremoğlu <ertugkeremoglu@gmail.com>"
+      ],
+      licenses: [
+        "MIT"
+      ],
+      links: %{
+        github: source_url()
+      },
+      files: [
+        "assets",
+        "lib",
+        "mix.exs",
+        "LICENSE.txt",
+        "README.md",
+        ".formatter.exs"
+      ]
+    ]
+  end
+
+  defp docs() do
+    [
+      name: "Anka",
+      main: "Anka",
+      logo: "assets/logo.png",
+      source_url: source_url(),
+      source_ref: "v#{@version}",
+      formatters: [
+        "html",
+        "epub"
       ]
     ]
   end
@@ -60,16 +105,6 @@ defmodule Anka.MixProject do
   defp elixirc_paths(_env) do
     elixirc_paths()
   end
-
-  def docs() do
-		[
-      name: "Anka",
-      main: "Anka",
-			logo: "logo.png",
-			source_ref: "v#{@version}",
-			source_url: source_url(),
-		]
-	end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
