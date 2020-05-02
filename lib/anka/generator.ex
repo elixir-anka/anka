@@ -18,8 +18,8 @@ defmodule Anka.Generator do
       definition =
         Anka.Model.spec(model_expanded, [:struct, :fields], default: [])
         |> Enum.map(fn
-          {key, opts} ->
-            default_value = Anka.Model.spec(opts, :default)
+          {key, field_spec} ->
+            default_value = Anka.Model.spec(field_spec, [:opts, :default], default: [])
             {key, default_value}
 
           key ->
