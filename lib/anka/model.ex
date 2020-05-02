@@ -15,26 +15,34 @@ defmodule Anka.Model do
 
   ## Examples
 
-      iex> defmodule Document do
-      ...>   use Anka.Model, [
-      ...>     name: [
-      ...>       singular: :document,
-      ...>       plural: :documents,
-      ...>     ]
-      ...>   ]
-      ...> end
-      ...>
-      ...> Document.spec([:name, :plural])
-      :documents
-
+  ```elixir
+  defmodule Document do
+    use Anka.Model, [
+      name: [
+        singular: :document,
+        plural: :documents,
+      ],
+      struct: [
+        fields: [
+          :id,
+          content: [
+            opts: [
+              default: ""
+            ]
+          ]
+        ]
+      ]
+    ]
+  end
+  ```
   """
   @moduledoc since: "0.1.1"
 
   @typedoc since: "0.1.1"
-  @type t :: atom
+  @type t :: module() | __MODULE__.container()
 
   @typedoc since: "0.1.1"
-  @type container :: keyword | map | struct | any()
+  @type container :: keyword() | map() | struct() | any()
 
   @typedoc since: "0.1.1"
   @type path :: [any(), ...] | any()
@@ -71,25 +79,40 @@ defmodule Anka.Model do
 
   ## Examples
 
-      iex> Anka.Model.spec(Model.User)
+      iex> Anka.Model.spec(Model.Document)
       [
         name: [
-          singular: :user,
-          plural: :users
+          singular: :document,
+          plural: :documents
         ],
         struct: [
           fields: [
             :id,
-            :username,
+            content: [
+              opts: [
+                default: ""
+              ]
+            ]
           ]
         ]
       ]
 
+      iex> Anka.Model.spec(Model.Document) == Model.Document.spec()
+      true
+
   """
   @doc since: "0.1.1"
   @spec spec(__MODULE__.t()) :: __MODULE__.container()
-  def spec(model) do
+  def spec(model)
+
+  def spec(model)
+      when is_atom(model) do
     apply(model, :spec, [])
+  end
+
+  def spec(model)
+      when is_list(model) do
+    model
   end
 
   @doc ~S"""
@@ -102,20 +125,41 @@ defmodule Anka.Model do
 
   ## Examples
 
-      iex> Anka.Model.spec(Model.User, :name, default: [])
-      [singular: :user, plural: :users]
+      iex> Anka.Model.spec(Model.Document, :name, default: [])
+      [singular: :document, plural: :documents]
 
-      iex> Anka.Model.spec(Model.User, [:name, :singular])
-      :user
+      iex> Anka.Model.spec([singular: :document, plural: :documents], :singular)
+      :document
 
-      iex> Anka.Model.spec(Model.User, [:struct, :fields, Access.at(0)])
+      iex> Anka.Model.spec(Model.Document, [:struct, :fields, Access.at(0)])
       :id
 
   """
   @doc since: "0.1.1"
   @spec spec(__MODULE__.t(), __MODULE__.path(), keyword) :: any()
-  def spec(model, path, opts \\ []) do
+  def spec(model, path, opts \\ [])
+
+  def spec(model, path, opts)
+      when is_atom(model) do
     apply(model, :spec, [path, opts])
+  end
+
+  def spec(model, path, opts)
+      when is_list(model) do
+    path = List.wrap(path)
+    default_value = Keyword.get(opts, :default, nil)
+
+    value =
+      model
+      |> get_in(path)
+
+    case is_nil(value) do
+      true ->
+        default_value
+
+      false ->
+        value
+    end
   end
 
   @doc ~S"""
@@ -134,20 +178,7 @@ defmodule Anka.Model do
 
       @impl unquote(__MODULE__)
       def spec(path, opts \\ []) do
-        path = List.wrap(path)
-        default_value = Keyword.get(opts, :default, nil)
-
-        value =
-          spec()
-          |> get_in(path)
-
-        case is_nil(value) do
-          true ->
-            default_value
-
-          false ->
-            value
-        end
+        Anka.Model.spec(spec(), path, opts)
       end
 
       defoverridable spec: 0,

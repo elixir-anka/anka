@@ -7,8 +7,13 @@ defmodule Generator.Struct do
 
     definition =
       Anka.Model.spec(model_expanded, [:struct, :fields], default: [])
-      |> Enum.map(fn key ->
-        {key, nil}
+      |> Enum.map(fn
+        {key, field_spec} ->
+          default_value = Anka.Model.spec(field_spec, [:opts, :default])
+          {key, default_value}
+
+        key ->
+          {key, nil}
       end)
       |> Keyword.new()
 

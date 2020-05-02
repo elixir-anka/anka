@@ -1,7 +1,7 @@
 defmodule Anka.MixProject do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.1.2"
 
   @description """
   Anka and its binding projects provide base model structure and macros
@@ -62,7 +62,7 @@ defmodule Anka.MixProject do
         "MIT"
       ],
       links: %{
-        github: source_url()
+        "GitHub" => source_url()
       },
       files: [
         "assets",
