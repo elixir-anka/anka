@@ -57,8 +57,8 @@ defmodule Anka.Generator do
   @moduledoc since: "0.1.1"
 
   @doc since: "0.1.1"
-  @macrocallback generate(model :: Anka.Model.t()) :: Macro
+  @macrocallback generate(model :: Anka.Model.t()) :: Macro.t()
 
   @doc since: "0.1.1"
-  @macrocallback generate(model :: Anka.Model.t(), opts :: Keyword) :: Macro
+  @macrocallback generate(model :: Anka.Model.t(), opts :: Keyword) :: Macro.t()
 end
